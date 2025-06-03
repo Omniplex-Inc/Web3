@@ -6,7 +6,7 @@ let provider;
 let signer;
 
 // WalletConnect v2 Configuration
-const projectId = "your_project_id"; // Replace with your WalletConnect Project ID from https://cloud.walletconnect.com/
+const projectId = "cc7635be70cf7f301357192a1267f095"; // Replace with your WalletConnect Project ID from https://cloud.walletconnect.com/
 const rpcUrls = {
   1: "https://mainnet.infura.io/v3/bfe31d7f19df4e4695ed2ad376ebfa5c", // Ethereum Mainnet
   56: "https://bsc-dataseed.binance.org/", // Binance Smart Chain Mainnet
