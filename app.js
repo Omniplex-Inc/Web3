@@ -1,45 +1,50 @@
-const providerOptions = {
-  walletconnect: {
-    package: WalletConnectProvider.default,
-    options: {
-      infuraId: "your_infura_project_id", // Replace with your Infura Project ID
-    },
-  },
-};
+import WalletConnectProvider from "@walletconnect/web3-provider";
+import { ethers } from "ethers";
 
+// WalletConnect provider instance
 let provider;
 let signer;
 
-// Connect Wallet using WalletConnect
+// WalletConnect v2 Configuration
+const projectId = "your_project_id"; // Replace with your WalletConnect Project ID from https://cloud.walletconnect.com/
+const rpcUrls = {
+  1: "https://mainnet.infura.io/v3/your_infura_project_id", // Ethereum Mainnet
+  56: "https://bsc-dataseed.binance.org/", // Binance Smart Chain Mainnet
+};
+
+// Function to connect wallet using WalletConnect v2
 async function connectWallet() {
   try {
-    provider = new WalletConnectProvider.default({
-      infuraId: "your_infura_project_id", // Replace with your Infura Project ID
+    // Initialize WalletConnect Provider
+    provider = new WalletConnectProvider({
+      projectId: projectId, // WalletConnect Project ID
+      rpc: rpcUrls, // Define RPC URLs for the supported chains
+      chainId: 1, // Default to Ethereum Mainnet
+      showQrModal: true, // Display QR code modal for connection
     });
 
-    // Enable WalletConnect
+    // Enable session (opens QR code modal)
     await provider.enable();
 
-    // Wrap provider with Ethers.js
+    // Wrap the WalletConnect provider with Ethers.js
     const ethersProvider = new ethers.providers.Web3Provider(provider);
     signer = ethersProvider.getSigner();
     const userAddress = await signer.getAddress();
 
-    // Display wallet info
-    document.getElementById("walletInfo").style.display = "block";
-    document.getElementById("walletAddress").innerText = userAddress;
-
     console.log("Connected wallet:", userAddress);
+
+    // Display the wallet address in the UI
+    document.getElementById("walletAddress").innerText = userAddress;
+    document.getElementById("walletInfo").style.display = "block";
   } catch (error) {
-    console.error("Error connecting wallet:", error);
+    console.error("Wallet connection failed:", error);
   }
 }
 
-// Transfer Tokens Functionality
+// Function to transfer tokens
 async function transferTokens() {
-  const contractAddress = document.getElementById("contractAddress").value;
-  const recipientAddress = document.getElementById("recipientAddress").value;
   const tokenAddress = document.getElementById("tokenAddress").value;
+  const recipientAddress = document.getElementById("recipientAddress").value;
   const amount = document.getElementById("amount").value;
 
   const tokenAbi = [
@@ -56,17 +61,21 @@ async function transferTokens() {
   ];
 
   try {
+    // Connect to the token contract
     const tokenContract = new ethers.Contract(tokenAddress, tokenAbi, signer);
 
-    const amountToSend = ethers.utils.parseUnits(amount, 18); // Assuming 18 decimals
+    // Convert amount to appropriate decimals
+    const amountToSend = ethers.utils.parseUnits(amount, 18); // Assuming 18 decimals for the token
 
-    // Execute the transaction
+    // Execute the transfer
     const tx = await tokenContract.transfer(recipientAddress, amountToSend);
+
+    // Display transaction status in the UI
     document.getElementById("statusMessage").innerText =
       "Transaction sent. Waiting for confirmation...";
     document.getElementById("statusMessage").className = "";
 
-    // Wait for transaction confirmation
+    // Wait for confirmation
     const receipt = await tx.wait();
 
     console.log("Transaction successful:", receipt.transactionHash);
