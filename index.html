@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Token Transfer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Token Transfer</h2>
+    <button id="connectWallet">Connect Wallet</button>
+    <div id="walletInfo" style="display:none;">
+      <p><strong>Connected Wallet:</strong> <span id="walletAddress"></span></p>
+      <input id="contractAddress" type="text" placeholder="Smart Contract Address">
+      <input id="recipientAddress" type="text" placeholder="Recipient Address">
+      <input id="tokenAddress" type="text" placeholder="Token Contract Address">
+      <input id="amount" type="number" placeholder="Amount">
+      <button id="transferTokens">Transfer Tokens</button>
+      <p id="statusMessage"></p>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider/dist/umd/index.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
